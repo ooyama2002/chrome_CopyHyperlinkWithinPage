@@ -1,10 +1,11 @@
 {
     "manifest_version": 3,
-    "name": "CopyHyperlinkWithinPage",
-    "version": "1.0.0",
+    "name": "Copy Hyperlink Within Page",
+    "version": "1.0.1",
     "description": "Copy a hyperlink within a page",
     "homepage_url": "https://github.com/ooyama2002/chrome_CopyHyperlinkWithinPage/",
     "icons": {
+        "16": "icon-16.png",
         "32": "icon-32.png",
         "48": "icon-48.png",
         "64": "icon-64.png",

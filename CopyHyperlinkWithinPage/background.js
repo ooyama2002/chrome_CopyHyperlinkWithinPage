@@ -1,66 +1,52 @@
-{
-    chrome.runtime.onInstalled.addListener((details) => {
+// クリックイベントの登録
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+    chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        args: [info.menuItemId],
+        function: (param) => {
 
-        chrome.contextMenus.create({
-            type: "normal",
-            id: "normal",
-            title: "normal",
-            contexts: ["all"],
-        });
+            let elements = document.querySelectorAll("a");
+            let buff = "";
 
-        chrome.contextMenus.create({
-            type: "normal",
-            id: "markdown",
-            title: "markdown",
-            contexts: ["all"],
-        });
+            for (let i = 0; i < elements.length; i++) {
+                if (elements[i].href !== undefined
+                    && elements[i].href.startsWith("http")) {
 
-        chrome.contextMenus.create({
-            type: "normal",
-            id: "pukiwiki",
-            title: "pukiwiki",
-            contexts: ["all"],
-        });
+                    let title = ((elements[i].textContent == "") ? "untitled" : elements[i].textContent);
+                    let url = elements[i].href;
 
-        chrome.contextMenus.create({
-            type: "normal",
-            id: "html",
-            title: "html",
-            contexts: ["all"],
-        });
-
-    });
-
-    chrome.contextMenus.onClicked.addListener((info, tab) => {
-        chrome.scripting.executeScript({
-            target: { tabId: tab.id },
-            args: [info.menuItemId],
-            function: (param) => {
-
-                let elements = document.querySelectorAll("a");
-                let buff = "";
-
-                for (let i = 0; i < elements.length; i++) {
-                    if (elements[i].href !== undefined
-                        && elements[i].href.startsWith("http")) {
-
-                        let title = ((elements[i].textContent == "") ? "untitled" : elements[i].textContent);
-                        let url = elements[i].href;
-
-                        if (param == "normal") {
-                            buff += title + "\r\n" + url + "\r\n\r\n";
-                        } else if (param == "markdown") {
-                            buff += "[" + title + "](" + url + ")\r\n";
-                        } else if (param == "pukiwiki") {
-                            buff += "[[" + title + ":" + url + "]]\r\n";
-                        } else if (param == "html") {
-                            buff += "<a href=\"" + url + "\">" + title + "</a>\r\n";
-                        }
+                    if (param == "normal") {
+                        buff += title + "\r\n" + url + "\r\n\r\n";
+                    } else if (param == "markdown") {
+                        buff += "[" + title + "](" + url + ")\r\n";
+                    } else if (param == "pukiwiki") {
+                        buff += "[[" + title + ":" + url + "]]\r\n";
+                    } else if (param == "html") {
+                        buff += "<a href=\"" + url + "\">" + title + "</a>\r\n";
                     }
                 }
+            }
 
-                navigator.clipboard.writeText(buff);
-            },
-        });
+            navigator.clipboard.writeText(buff);
+        },
     });
-}
+});
+
+// コンテキストメニューの登録
+chrome.runtime.onInstalled.addListener((details) => {
+
+    let ids = [
+        "normal",
+        "markdown",
+        "pukiwiki",
+        "html"
+    ];
+
+    for (let i = 0; i < ids.length; i++) {
+        chrome.contextMenus.create({
+            id: ids[i],
+            title: ids[i],
+            contexts: ["all"],
+        });
+    };
+});
