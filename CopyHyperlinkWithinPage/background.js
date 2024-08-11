@@ -12,7 +12,14 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
                 if (elements[i].href !== undefined
                     && elements[i].href.startsWith("http")) {
 
-                    let title = ((elements[i].textContent == "") ? "untitled" : elements[i].textContent);
+                    let title = elements[i].textContent
+                        .replace(/\r/g, " ")
+                        .replace(/\n/g, " ")
+                        .replace(/\t/g, " ")
+                        .replace(/\s{2,}/g, " ")
+                        .trim();
+                    if (title == "") title = "untitled";
+
                     let url = elements[i].href;
 
                     if (param == "normal") {
